@@ -10,13 +10,15 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="app_user")
+@Table(name="app_user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"login"})
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "app_user_id_seq", sequenceName = "app_user_id_seq")
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "login")
     private String login;
@@ -24,7 +26,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @JoinColumn(name = "role_id")
     @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 }
