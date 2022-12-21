@@ -1,8 +1,9 @@
-package ru.smart_transportation.dto;
+package ru.smart_transportation.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 @Data
@@ -10,6 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class NewUser implements Serializable {
     private String companyName;
-    private String login;
+    private String phoneNumber;
+    private String username;
     private String password;
 }

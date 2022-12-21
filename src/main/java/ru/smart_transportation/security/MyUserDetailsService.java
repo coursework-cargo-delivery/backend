@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.smart_transportation.model.User;
-import ru.smart_transportation.repo.UserRepository;
+import ru.smart_transportation.entity.AppUser;
+import ru.smart_transportation.repo.AppUserRepository;
 
 import java.util.Collections;
 
@@ -15,16 +15,16 @@ import java.util.Collections;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AppUserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository
-                .findByLogin(username)
+        AppUser user = userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getLogin(),
+                user.getUsername(),
                 user.getPassword(),
                 Collections.emptyList()
         );

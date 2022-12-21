@@ -1,4 +1,4 @@
-package ru.smart_transportation.dto;
+package ru.smart_transportation.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OldUser implements Serializable {
-    private String login;
+    private String username;
     private String password;
 }
