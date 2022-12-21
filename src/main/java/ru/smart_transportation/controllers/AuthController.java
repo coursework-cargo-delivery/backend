@@ -15,6 +15,7 @@ import ru.smart_transportation.repo.AppUserRepository;
 import ru.smart_transportation.repo.RoleRepository;
 import ru.smart_transportation.security.JwtTokenProvider;
 import ru.smart_transportation.etc.DatabaseRole;
+import ru.smart_transportation.service.ClientService;
 
 @RestController
 @CrossOrigin("*")
@@ -35,6 +36,9 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    ClientService clientService;
 
     @PostMapping("signin")
     ResponseEntity<AuthResponse> signIn(@RequestBody OldUser user){
@@ -66,10 +70,12 @@ public class AuthController {
         appUser.setPassword(encoder.encode(newUser.getPassword()));
         appUser.setRole(
                 roleRepository.findRoleByRoleName(
-                        DatabaseRole.ROLE_CUSTOMER.name()
+                        DatabaseRole.ROLE_CLIENT.name()
                 )
         );
         userRepository.save(appUser);
+        clientService.createClient(newUser, appUser);
+
 
         // Sign in
         final var authentication = authenticationManager.authenticate(
