@@ -13,7 +13,7 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "client_id_seq", sequenceName = "client_id_seq")
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "company_name")
     private String companyName;

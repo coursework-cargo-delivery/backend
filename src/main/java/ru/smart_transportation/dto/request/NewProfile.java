@@ -1,13 +1,14 @@
-package ru.smart_transportation.dto.response;
+package ru.smart_transportation.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class GetProfileResponse {
+@NoArgsConstructor
+public class NewProfile implements Serializable {
     private String companyName;
     private String phoneNumber;
 }

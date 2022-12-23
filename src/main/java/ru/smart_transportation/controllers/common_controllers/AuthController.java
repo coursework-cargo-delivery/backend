@@ -1,4 +1,4 @@
-package ru.smart_transportation.controllers;
+package ru.smart_transportation.controllers.common_controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
