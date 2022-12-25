@@ -66,6 +66,16 @@ public class OrderService {
                         .collect(Collectors.toList())
         );
     }
+
+    public OrdersResponse getAllOrders() {
+        final var orders = orderRepository.findAll();
+
+        return new OrdersResponse(
+                orders.stream()
+                        .map(this::convertOrderToOrderResponse)
+                        .collect(Collectors.toList())
+        );
+    }
     
     private OrderResponse convertOrderToOrderResponse(Order order){
         final var response = new OrderResponse();
