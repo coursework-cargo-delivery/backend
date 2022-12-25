@@ -11,7 +11,4 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("select o from Order o where o.client = ?1")
     List<Order> findAllByClient(Client client);
-
-    @Query ("select o from Order o")
-    List<Order> findAllOrders();
 }

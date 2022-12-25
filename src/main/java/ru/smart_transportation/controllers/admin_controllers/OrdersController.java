@@ -19,7 +19,8 @@ public class OrdersController {
 
     @GetMapping("orders")
     ResponseEntity<OrdersResponse> getAllOrders(){
-        OrdersResponse response = orderService.getAllOrders();
+        final var response = orderService.getAllOrders();
+
         return ResponseEntity.ok(response);
     }
 }

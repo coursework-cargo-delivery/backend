@@ -68,7 +68,7 @@ public class OrderService {
     }
 
     public OrdersResponse getAllOrders() {
-        final var orders = orderRepository.findAllOrders();
+        final var orders = orderRepository.findAll();
 
         return new OrdersResponse(
                 orders.stream()
