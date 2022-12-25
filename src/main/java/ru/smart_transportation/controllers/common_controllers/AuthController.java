@@ -70,7 +70,7 @@ public class AuthController {
         appUser.setPassword(encoder.encode(newUser.getPassword()));
         appUser.setRole(
                 roleRepository.findRoleByRoleName(
-                        DatabaseRole.ROLE_CLIENT.name()
+                        DatabaseRole.ROLE_CUSTOMER.name()
                 )
         );
         userRepository.save(appUser);

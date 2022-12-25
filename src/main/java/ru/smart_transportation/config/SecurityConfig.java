@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.smart_transportation.etc.DatabaseRole;
 import ru.smart_transportation.security.JwtAuthenticationFilter;
 import ru.smart_transportation.security.JwtAuthenticationPoint;
 
@@ -51,10 +52,12 @@ public class SecurityConfig{
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/auth/**", "/common/**")
                         .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/admin/**")
+                        .hasAuthority(DatabaseRole.ROLE_ADMIN.name())
+                        .requestMatchers("/user/**")
+                        .hasAuthority(DatabaseRole.ROLE_CUSTOMER.name())
                 )
                 .build();
     }
