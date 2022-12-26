@@ -32,6 +32,9 @@ public class OrderService {
     @Autowired
     CargoTypeRepository cargoTypeRepository;
 
+    @Autowired
+    PaymentService paymentService;
+
     public OrderResponse createOrder(NewOrder request) {
         final var order = new Order();
         final var user = userService.getCurrentUser().orElseThrow();
@@ -87,5 +90,14 @@ public class OrderService {
         response.setComment(order.getComment());
 
         return response;
+    }
+
+    public OrderResponse changeOrderStatus(Integer orderId, Integer newStatusIs) {
+        final var newStatus = orderStatusRepository.findById(newStatusIs).orElseThrow();
+        orderRepository.updateStatusById(newStatus, orderId);
+        final var order = orderRepository.findById(orderId).orElseThrow();
+        paymentService.addReceipt(order);
+
+        return convertOrderToOrderResponse(order);
     }
 }
