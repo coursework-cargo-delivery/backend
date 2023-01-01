@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -42,14 +44,28 @@ public class AuthController {
 
     @PostMapping("signin")
     ResponseEntity<AuthResponse> signIn(@RequestBody OldUser user){
-        final var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
+        final Authentication authentication;
+        final var response = new AuthResponse();
+
+        try{
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+            );
+        }catch(AuthenticationException e){
+            response.setErrorMessage(e.getMessage());
+            return ResponseEntity.status(401).body(response);
+        }
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final var jwt = jwtUtils.generateToken(authentication);
-        final var response = new AuthResponse();
         response.setJwt("Bearer " + jwt);
+        response.setRole(authentication
+                .getAuthorities()
+                .toArray()[0]
+                .toString()
+                .split("_")[1]
+        );
 
         return ResponseEntity.ok(response);
     }
