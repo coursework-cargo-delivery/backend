@@ -70,6 +70,7 @@ public class OrderService {
         return new OrdersResponse(
                 orders.stream()
                         .map(this::convertOrderToOrderResponse)
+                        .sorted((a, b) -> b.getId() - a.getId())
                         .collect(Collectors.toList())
         );
     }

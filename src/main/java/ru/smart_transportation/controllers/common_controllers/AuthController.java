@@ -101,6 +101,11 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final var jwt = jwtUtils.generateToken(authentication);
         response.setJwt("Bearer " + jwt);
+        response.setRole(authentication
+                .getAuthorities()
+                .toArray()[0]
+                .toString()
+                .split("_")[1]);
 
         return ResponseEntity.ok(response);
     }
