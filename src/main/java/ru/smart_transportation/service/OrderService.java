@@ -3,12 +3,15 @@ package ru.smart_transportation.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.smart_transportation.dto.request.NewOrder;
+import ru.smart_transportation.dto.response.CargoTypesResponse;
 import ru.smart_transportation.dto.response.OrderResponse;
 import ru.smart_transportation.dto.response.OrdersResponse;
+import ru.smart_transportation.entity.CargoType;
 import ru.smart_transportation.entity.Order;
 import ru.smart_transportation.etc.DatabaseOrderStatus;
 import ru.smart_transportation.repo.*;
 
+import java.sql.Date;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +48,7 @@ public class OrderService {
         order.setClient(client);
         order.setStation1(station1);
         order.setStation2(station2);
+        order.setCreationDate(new Date(System.currentTimeMillis()));
         order.setStatus(orderStatusRepository
                 .findById(DatabaseOrderStatus.PENDING.getId()).orElseThrow());
         order.setCargoType(cargoTypeRepository
@@ -85,7 +89,9 @@ public class OrderService {
         response.setId(order.getId());
         response.setStation1(order.getStation1().getId());
         response.setStation2(order.getStation2().getId());
+        response.setCreationDate(order.getCreationDate());
         response.setStatus(order.getStatus().getName());
+        response.setCargoType(order.getCargoType().getName());
         response.setWeight(order.getWeight());
         response.setComment(order.getComment());
 
@@ -99,5 +105,15 @@ public class OrderService {
         paymentService.addReceipt(order);
 
         return convertOrderToOrderResponse(order);
+    }
+
+    public CargoTypesResponse getCargoTypes(){
+        return new CargoTypesResponse(
+                cargoTypeRepository
+                        .findAll()
+                        .stream()
+                        .map(CargoType::getName)
+                        .collect(Collectors.toList())
+        );
     }
 }

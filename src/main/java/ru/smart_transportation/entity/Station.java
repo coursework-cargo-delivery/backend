@@ -27,6 +27,9 @@ public class Station implements Serializable {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
 
+    @Column(name = "line_id", nullable = false)
+    private Integer lineId;
+
     @Column(name = "\"order\"", nullable = false)
     private Integer order;
 
