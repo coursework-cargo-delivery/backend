@@ -12,6 +12,7 @@ import ru.smart_transportation.etc.DatabaseOrderStatus;
 import ru.smart_transportation.repo.*;
 
 import java.sql.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +82,7 @@ public class OrderService {
         return new OrdersResponse(
                 orders.stream()
                         .map(this::convertOrderToOrderResponse)
+                        .sorted((a, b) -> b.getId() - a.getId())
                         .collect(Collectors.toList())
         );
     }
@@ -99,11 +101,16 @@ public class OrderService {
         return response;
     }
 
-    public OrderResponse changeOrderStatus(Integer orderId, Integer newStatusIs) {
-        final var newStatus = orderStatusRepository.findById(newStatusIs).orElseThrow();
+    public OrderResponse changeOrderStatus(Integer orderId, Integer newStatusId) {
+        final var newStatus = orderStatusRepository.findById(newStatusId).orElseThrow();
         orderRepository.updateStatusById(newStatus, orderId);
+
         final var order = orderRepository.findById(orderId).orElseThrow();
-        paymentService.addReceipt(order);
+        if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_PAYMENT.toString())){
+            paymentService.addReceipt(order);
+        } else if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_DELIVERY.toString())){
+            paymentService.pay(order);
+        }
 
         return convertOrderToOrderResponse(order);
     }
