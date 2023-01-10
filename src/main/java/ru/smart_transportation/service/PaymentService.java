@@ -17,7 +17,7 @@ public class PaymentService {
 
     @Autowired MapService mapService;
 
-    public float addReceipt(Order order) {
+    public void addReceipt(Order order) {
         final float price = this.countPrice(order);
         final var payment = new Payment();
 
@@ -26,29 +26,10 @@ public class PaymentService {
         payment.setCost(BigDecimal.valueOf(price)); //todo рассчитай стоимость перевозки
 
         paymentRepository.save(payment);
-
-        return price;
     }
 
-    private float countPrice(Order order){
-        final var from = order.getStation1();
-        final var to = order.getStation2();
-        int pathLength = getPathLength(from, to);
-
-        return pathLength * 20 + order.getWeight() * 10;
-    }
-
-    private int getPathLength(Station from, Station to){
-        final var map = mapService.getMap();
-        final var stations = map.getStations();
-        final var intersections = map.getIntersections();
-        final var lines = map.getTrainLines();
-
-        int pathLength = 1;
-
-        //todo посчитай длину пути в графе
-
-        return pathLength;
+    public float countPrice(Order order){
+        return order.getWeight() * 10;
     }
 
     public void pay(Order order){

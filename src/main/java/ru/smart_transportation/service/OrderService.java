@@ -11,6 +11,7 @@ import ru.smart_transportation.entity.Order;
 import ru.smart_transportation.etc.DatabaseOrderStatus;
 import ru.smart_transportation.repo.*;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,6 +39,9 @@ public class OrderService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public OrderResponse createOrder(NewOrder request) {
         final var order = new Order();
@@ -97,6 +101,7 @@ public class OrderService {
         response.setCargoType(order.getCargoType().getName());
         response.setWeight(order.getWeight());
         response.setComment(order.getComment());
+        response.setPrice(paymentService.countPrice(order));
 
         return response;
     }
@@ -104,17 +109,15 @@ public class OrderService {
     public OrderResponse changeOrderStatus(Integer orderId, Integer newStatusId) {
         final var newStatus = orderStatusRepository.findById(newStatusId).orElseThrow();
         orderRepository.updateStatusById(newStatus, orderId);
-        Float price = null;
 
         final var order = orderRepository.findById(orderId).orElseThrow();
         if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_PAYMENT.toString())){
-            price = paymentService.addReceipt(order);
+            paymentService.addReceipt(order);
         } else if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_DELIVERY.toString())){
             paymentService.pay(order);
         }
 
         final var response = convertOrderToOrderResponse(order);
-        response.setPrice(price);
 
         return response;
     }
