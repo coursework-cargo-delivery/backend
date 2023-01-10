@@ -8,6 +8,7 @@ import ru.smart_transportation.entity.Station;
 import ru.smart_transportation.repo.PaymentRepository;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 @Service
 public class PaymentService {
@@ -38,6 +39,36 @@ public class PaymentService {
         return pathLength * 20 + order.getWeight() * 10;
     }
 
+    static int min_num_of_edges = 0, edge_count = 0;
+    private void minEdgeDFSUtil(boolean[] visited,
+                                int src, int des)
+    {
+        visited[src] = true;
+
+        if (src == des)
+        {
+            if (min_num_of_edges > edge_count)
+                min_num_of_edges = edge_count;
+        }
+
+        else
+        {
+            for (int i : adj[src])
+            {
+                int v = i;
+
+                if (!visited[v])
+                {
+                    edge_count++;
+                    minEdgeDFSUtil(visited, v, des);
+                }
+            }
+        }
+
+        visited[src] = false;
+        edge_count--;
+    }
+
     private int getPathLength(Station from, Station to){
         final var map = mapService.getMap();
         final var stations = map.getStations();
@@ -45,8 +76,23 @@ public class PaymentService {
         final var lines = map.getTrainLines();
 
         int pathLength = 1;
+        boolean[] visited = new boolean[to.getId()];
+        Arrays.fill(visited, false);
+
+        // To store minimum number of edges
+        min_num_of_edges = Integer.MAX_VALUE;
+
+        // To store total number of
+        // edges in each path
+        edge_count = 0;
+
+        minEdgeDFSUtil(visited, from.getId(), to.getId());
+
+        // Print the minimum number of edges
+        System.out.println(min_num_of_edges);
 
         //todo посчитай длину пути в графе
+
 
         return pathLength;
     }
