@@ -18,4 +18,5 @@ public class OrderResponse implements Serializable {
     private String cargoType;
     private Float weight;
     private String comment;
+    private Float price;
 }

@@ -104,15 +104,19 @@ public class OrderService {
     public OrderResponse changeOrderStatus(Integer orderId, Integer newStatusId) {
         final var newStatus = orderStatusRepository.findById(newStatusId).orElseThrow();
         orderRepository.updateStatusById(newStatus, orderId);
+        Float price = null;
 
         final var order = orderRepository.findById(orderId).orElseThrow();
         if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_PAYMENT.toString())){
-            paymentService.addReceipt(order);
+            price = paymentService.addReceipt(order);
         } else if (Objects.equals(newStatus.getName(), DatabaseOrderStatus.AWAITING_DELIVERY.toString())){
             paymentService.pay(order);
         }
 
-        return convertOrderToOrderResponse(order);
+        final var response = convertOrderToOrderResponse(order);
+        response.setPrice(price);
+
+        return response;
     }
 
     public CargoTypesResponse getCargoTypes(){
